@@ -2,9 +2,15 @@
 
 ## RCA
 
-When attacker have the ability of oob read and write, they can modify `data` in regexp, in which stores bytecode. In `IrregexpInterpreter::Result RawMatch` function, it just read bytecode and execute. Also, registers located in stack and has no check of boundarys (Only DCHECK). By modifying bytecode, it's possible to create an rop chain via oob write.
+Issue: 330404819
 
-This was fixed in commit `xxx`.
+When attacker have the ability of oob read and write, they can modify `data` in regexp, in which stores bytecode. In `IrregexpInterpreter::Result RawMatch` function, it just read bytecode and execute. 
+
+Also, registers located on stack and has no check of boundarys (Only DCHECK). By modifying bytecode, it's possible to create an rop chain via oob write.
+
+This was fixed in commit `b9349d97fd44aec615307c9d00697152da95a66a`.
+
+
 
 ## Reproduce
 
@@ -21,6 +27,8 @@ v8_enable_memory_corruption_api=true
 ```
 
 Use `--sandbox-fuzzing` to enable `Sandbox` at runtime.
+
+The exploit uses `push` and `pop` bytecodes for copying registers, `set` for adding constants on stack and `advance` for calculations.
 
 Poc here hijacks control flow to `0x4141414141414141`, which can be verified via gdb since `--sandbox-fuzzing` will ignore memmory violation issues. This should function effectively on other builds, as the offset has been consistently observed to remain unchanged.
 
