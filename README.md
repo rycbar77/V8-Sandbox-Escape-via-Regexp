@@ -30,7 +30,7 @@ Use `--sandbox-fuzzing` to enable `Sandbox` at runtime.
 
 The exploit uses `push` and `pop` bytecodes for copying registers, `set` for adding constants on stack and `advance` for calculations.
 
-Poc here hijacks control flow to `0x4141414141414141`, which can be verified via gdb since `--sandbox-fuzzing` will ignore memmory violation issues. This should function effectively on other builds, as the offset has been consistently observed to remain unchanged.
+Poc here hijacks control flow to `0x4141414141414141`, which can be verified via gdb since `--sandbox-fuzzing` will ignore memory violation issues. This should function effectively on other builds, as the offset has been consistently observed to remain unchanged.
 
 ```js
 // Flags:  --sandbox-fuzzing
