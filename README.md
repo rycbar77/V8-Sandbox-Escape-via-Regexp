@@ -6,7 +6,7 @@ This technique achieves arbitrary code execution by modifying and interpreting t
 
 Issue: [330404819](https://issues.chromium.org/issues/330404819)
 
-When attackers have the ability to perform out-of-bounds (OOB) read and write operations in the heap sandbox, they can modify `data` field of `regexp` object, which stores the address of bytecode. In the `IrregexpInterpreter::Result RawMatc`h function, the bytecode is read and interpreted. Many bytecodes are related to `register` operations, but the `register`s are located on the stack and lack boundary checks (only `DCHECK`). By modifying the bytecode, it is possible to achieve OOB write on the stack and hijack the control flow.
+When attackers have the ability to perform out-of-bounds (OOB) read and write operations in the heap sandbox, they can modify `data` field of `regexp` object, which stores the address of bytecode. In the `IrregexpInterpreter::Result RawMatch` function, the bytecode is read and interpreted. Many bytecodes are related to `register` operations, but the `register`s are located on the stack and lack boundary checks (only `DCHECK`). By modifying the bytecode, it is possible to achieve OOB write on the stack and hijack the control flow.
 
 The workflow proceeds as follows: First, generate bytecode using `regex.exec`. Next, modify the bytecode array in data to execute arbitrary bytecode, ensuring to mark tier-up to guarantee the reuse of our malicious bytecode instead of regenerating it. Finally, execute our malicious bytecode again using `regex.exec` on the same string.
 
