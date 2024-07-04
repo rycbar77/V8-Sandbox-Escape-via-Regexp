@@ -1,10 +1,12 @@
 # V8 Sandbox Escape via Regexp
 
-This technique achieves arbitrary code execution by modifying and interpreting the bytecode of a `regexp` object. I used this technique to claim V8CTF M122, M123, and blood Maglev in PlaidCTF.
-
-## RCA
+This technique achieves arbitrary code execution by modifying and interpreting the bytecode of a `regexp` object. I used it to claim V8CTF M122, M123, and blood Maglev in PlaidCTF.
 
 Issue: [330404819](https://issues.chromium.org/issues/330404819)
+
+Affected: < Chrome M125
+
+## RCA
 
 When attackers have the ability to perform out-of-bounds (OOB) read and write operations in the heap sandbox, they can modify `data` field of `regexp` object, which stores the address of bytecode. In the `IrregexpInterpreter::Result RawMatch` function, the bytecode is read and interpreted. Many bytecodes are related to `register` operations, but the `register`s are located on the stack and lack boundary checks (only `DCHECK`). By modifying the bytecode, it is possible to achieve OOB write on the stack and hijack the control flow.
 
